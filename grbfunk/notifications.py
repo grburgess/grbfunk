@@ -8,14 +8,38 @@ import collections
 from grbfunk.utils.download_file import download_file
 
 
+_DEBUG = False
+if os.environ.get('GRBFUNK_DEBUG') is not None:
+
+    if os.environ.get('GRBFUNK_DEBUG') == 'True':
+
+        _DEBUG = True
+
+
 class Notification(object):
     def __init__(self, root, instrument_name, notify_type):
+        """
+        
+        
+
+        :param root: 
+        :param instrument_name: 
+        :param notify_type: 
+        :returns: 
+        :rtype: 
+
+        """
 
         self._instrument_name = instrument_name
         self._notify_type = notify_type
         
-        #self._root = lxml.etree.parse(open(root, "r"))
-        self._root = root
+        if _DEBUG:
+        
+            self._root = lxml.etree.parse(open(root, "r"))
+
+        else:
+            
+            self._root = root
 
         self._downloads = collections.OrderedDict()
         self._message = ""
