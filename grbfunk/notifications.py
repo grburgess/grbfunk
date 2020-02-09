@@ -1,6 +1,8 @@
 import re
 import os
 import lxml.etree
+import gcn
+
 
 from grbfunk.utils.download_file import download_file
 
@@ -102,6 +104,7 @@ class GBMLocationNotification(GBMNotification):
         self._add_line_to_msg(f"Dec: {dec}")
         self._add_line_to_msg(f"Err: {radius}")
 
+        
 
 class GBMFLTNotification(GBMLocationNotification):
     def __init__(self, root):
@@ -109,9 +112,45 @@ class GBMFLTNotification(GBMLocationNotification):
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
 
 
+class GBMGNDNotification(GBMLocationNotification):
+    def __init__(self, root):
+
+        super(GBMGNDNotification, self).__init__(root=root, notify_type="GND Position")
+
+
+    def action(self):
+
+        super(GBMGNDNotification, self).action()
+
+        self._get_light_curve_file()
+
+
+class GBMFinalNotification(GBMLocationNotification):
+    def __init__(self, root):
+
+        super(GBMFinalNotification, self).__init__(root=root, notify_type="Final Position")
+
+
+    def action(self):
+
+        super(GBMFinalNotification, self).action()
+
+        self._get_light_curve_file()
+
+        
 class GBMAlertNotification(GBMNotification):
     def __init__(self, root):
 
         super(GBMAlertNotification, self).__init__(
             root=root, notify_type="General Alert"
         )
+
+
+
+notification_lookup = {gcn.notice_types.FERMI_GBM_ALERT:GBMAlertNotification,
+                       gcn.notice_types.FERMI_FLT_POS:GBMFLTNotification,
+                       gcn.notice_types.FERMI_GND_POS:GBMGNDNotification,
+                       gcn.notice_types.FERMI_FIN_POS:GBMFinalNotification}
+
+
+        
