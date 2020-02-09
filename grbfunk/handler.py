@@ -2,7 +2,7 @@ import gcn
 import telegram
 import yaml
 
-from grbfunk.notifications import notification_lookup
+from grbfunk.notification_lookup import notification_lookup
 
 import os
 
