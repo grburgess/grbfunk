@@ -3,17 +3,21 @@ import os
 import lxml.etree
 import gcn
 
+import collections
 
 from grbfunk.utils.download_file import download_file
+
 
 class Notification(object):
     def __init__(self, root, instrument_name, notify_type):
 
         self._instrument_name = instrument_name
         self._notify_type = notify_type
-        self._root = lxml.etree.parse(open(root, "r"))
+        
+        #self._root = lxml.etree.parse(open(root, "r"))
+        self._root = root
 
-        self._downloads = []
+        self._downloads = collections.OrderedDict()
         self._message = ""
 
         self._build_message_header()
@@ -34,27 +38,34 @@ class Notification(object):
 
         self.action()
 
-    def _download(self, url, path):
+    def _download(self, url, path, description):
 
         tmp = download_file(url, path)
-        
-        self._downloads.append(tmp)
+
+        self._downloads[description] = tmp
 
         return tmp
-        
+
     def print(self):
 
         print(self._message)
 
-    def _cleanup(self):
+    def cleanup(self):
 
-        pass
-        
-    def send(self):
+        for k,v in self._downloads.items():
+            os.remove(v)
 
-        pass
+    @property
+    def message(self):
 
+        return self._message
 
+    @property
+    def downloads(self):
+
+        return self._downloads
+
+    
 class GBMNotification(Notification):
     def __init__(self, root, notify_type):
 
@@ -75,15 +86,19 @@ class GBMNotification(Notification):
 
         self._burst_name = f"GRB{yy}{mm}{dd}xxx"
 
-
     def _get_light_curve_file(self):
 
-        lc_file = self._find(".//Param[@name='LightCurve_URL']").attrib['value']
-        
-        directory = os.path.join('/tmp', self._burst_name)
+        lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
 
-        self._lc_file = self._download(lc_file, directory)
+        directory = os.path.join("/tmp", self._burst_name)
+
+        if not os.path.exists(directory):
+            
+            os.mkdir(directory)
         
+        self._lc_file = self._download(lc_file, directory, 'GBM Lightcurve')
+
+
 class GBMLocationNotification(GBMNotification):
     def __init__(self, root, notify_type):
 
@@ -104,7 +119,6 @@ class GBMLocationNotification(GBMNotification):
         self._add_line_to_msg(f"Dec: {dec}")
         self._add_line_to_msg(f"Err: {radius}")
 
-        
 
 class GBMFLTNotification(GBMLocationNotification):
     def __init__(self, root):
@@ -112,11 +126,17 @@ class GBMFLTNotification(GBMLocationNotification):
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
 
 
+    def action(self):
+
+        super(GBMFLTNotification, self).action()
+
+        self._get_light_curve_file()
+
+        
 class GBMGNDNotification(GBMLocationNotification):
     def __init__(self, root):
 
         super(GBMGNDNotification, self).__init__(root=root, notify_type="GND Position")
-
 
     def action(self):
 
@@ -128,8 +148,9 @@ class GBMGNDNotification(GBMLocationNotification):
 class GBMFinalNotification(GBMLocationNotification):
     def __init__(self, root):
 
-        super(GBMFinalNotification, self).__init__(root=root, notify_type="Final Position")
-
+        super(GBMFinalNotification, self).__init__(
+            root=root, notify_type="Final Position"
+        )
 
     def action(self):
 
@@ -137,7 +158,7 @@ class GBMFinalNotification(GBMLocationNotification):
 
         self._get_light_curve_file()
 
-        
+
 class GBMAlertNotification(GBMNotification):
     def __init__(self, root):
 
@@ -146,11 +167,9 @@ class GBMAlertNotification(GBMNotification):
         )
 
 
-
-notification_lookup = {gcn.notice_types.FERMI_GBM_ALERT:GBMAlertNotification,
-                       gcn.notice_types.FERMI_FLT_POS:GBMFLTNotification,
-                       gcn.notice_types.FERMI_GND_POS:GBMGNDNotification,
-                       gcn.notice_types.FERMI_FIN_POS:GBMFinalNotification}
-
-
-        
+notification_lookup = {
+    gcn.notice_types.FERMI_GBM_ALERT: GBMAlertNotification,
+    gcn.notice_types.FERMI_GBM_FLT_POS: GBMFLTNotification,
+    gcn.notice_types.FERMI_GBM_GND_POS: GBMGNDNotification,
+    gcn.notice_types.FERMI_GBM_FIN_POS: GBMFinalNotification,
+}
