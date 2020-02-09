@@ -1,70 +1,117 @@
 import re
+import os
 import lxml.etree
 
+from grbfunk.utils.download_file import download_file
 
 class Notification(object):
-    
     def __init__(self, root, instrument_name, notify_type):
-        
-        self._instrument_name  = instrument_name
-        self._notify_type = notify_type
-        self._root = lxml.etree.parse(open(root,'r'))
-        
-        self._message = ""
-        
-        self._build_message_header()
 
+        self._instrument_name = instrument_name
+        self._notify_type = notify_type
+        self._root = lxml.etree.parse(open(root, "r"))
+
+        self._downloads = []
+        self._message = ""
+
+        self._build_message_header()
+        self._build_message()
 
     def _add_line_to_msg(self, line):
         self._message += f"{line}\n"
-        
-    def action(self):
-        pass 
-    
-    def _build_message_header(self):
-        
-        self._add_line_to_msg(f'{self._instrument_name} Notification')
-        self._add_line_to_msg( f'Alert: {self._notify_type}')
 
-    
+    def action(self):
+        pass
+
+    def _build_message_header(self):
+
+        self._add_line_to_msg(f"{self._instrument_name} Notification")
+        self._add_line_to_msg(f"Alert: {self._notify_type}")
+
     def _build_message(self):
+
+        self.action()
+
+    def _download(self, url, path):
+
+        tmp = download_file(url, path)
         
-        action_string = self.action()
+        self._downloads.append(tmp)
+
+        return tmp
         
-        self._message += action_string
-    
     def print(self):
-        
+
         print(self._message)
-    
-    def send(self):
-        
+
+    def _cleanup(self):
+
         pass
         
-    
+    def send(self):
+
+        pass
+
 
 class GBMNotification(Notification):
-    
-    def __init__(self,root, notify_type):
-        
-        
-        super(GBMNotification, self).__init__(instrument_name='GBM',root=root, notify_type=notify_type)
-        
-        
+    def __init__(self, root, notify_type):
+
+        super(GBMNotification, self).__init__(
+            instrument_name="GBM", root=root, notify_type=notify_type
+        )
+
     def action(self):
         self._form_burst_name()
-        
-        pos2d = self._root.find('.//{*}Position2D')
-        ra = float(pos2d.find('.//{*}C1').text)
-        dec = float(pos2d.find('.//{*}C2').text)
-        radius = float(pos2d.find('.//{*}Error2Radius').text)
-        
+
+        self._add_line_to_msg(f"Name: {self._burst_name}")
+
     def _form_burst_name(self):
-        tmp = self._root.find('.//{*}ISOTime').text
-        yy, mm, dd = re.match('^\d\d(\d\d)-(\d\d)-(\d\d)T\d\d:\d\d:\d\d\.\d\d$', tmp).groups()
+        tmp = self._root.find(".//{*}ISOTime").text
+        yy, mm, dd = re.match(
+            "^\d\d(\d\d)-(\d\d)-(\d\d)T\d\d:\d\d:\d\d\.\d\d$", tmp
+        ).groups()
+
+        self._burst_name = f"GRB{yy}{mm}{dd}xxx"
+
+
+    def _get_light_curve_file(self):
+
+        lc_file = self._find(".//Param[@name='LightCurve_URL']").attrib['value']
         
+        directory = os.path.join('/tmp', self._burst_name)
+
+        self._lc_file = self._download(lc_file, directory)
         
-        self._burst_name = 'GRB{yy}{mm}{dd}xxx'
-        
-    
-    
+class GBMLocationNotification(GBMNotification):
+    def __init__(self, root, notify_type):
+
+        super(GBMLocationNotification, self).__init__(
+            root=root, notify_type=notify_type
+        )
+
+    def action(self):
+
+        super(GBMLocationNotification, self).action()
+
+        pos2d = self._root.find(".//{*}Position2D")
+        ra = float(pos2d.find(".//{*}C1").text)
+        dec = float(pos2d.find(".//{*}C2").text)
+        radius = float(pos2d.find(".//{*}Error2Radius").text)
+
+        self._add_line_to_msg(f"RA: {ra}")
+        self._add_line_to_msg(f"Dec: {dec}")
+        self._add_line_to_msg(f"Err: {radius}")
+
+
+class GBMFLTNotification(GBMLocationNotification):
+    def __init__(self, root):
+
+        super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
+
+
+class GBMAlertNotification(GBMNotification):
+    def __init__(self, root):
+
+        super(GBMAlertNotification, self).__init__(
+            root=root, notify_type="General Alert"
+        )
