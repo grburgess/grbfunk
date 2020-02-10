@@ -19,7 +19,8 @@ REQUIRED = [
     "python-telegram-bot",
     "pygcn",
     "pyyaml",
-    "coloredlogs"
+    "coloredlogs",
+    "requests"
     
 
 ]
