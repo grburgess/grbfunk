@@ -20,7 +20,8 @@ REQUIRED = [
     "pygcn",
     "pyyaml",
     "coloredlogs",
-    "requests"
+    "requests",
+    "numpy"
     
 
 ]
