@@ -95,7 +95,7 @@ def find_data_files(directory):
     return paths
 
 
-#extra_files = find_data_files("popsynth/data")
+extra_files = find_data_files("grbfunk/data")
 
 
 setup(
@@ -112,7 +112,7 @@ setup(
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
- #   package_data={"": extra_files},
+    package_data={"": extra_files},
     license="GPL3",
     cmdclass={"upload": UploadCommand},
 )
