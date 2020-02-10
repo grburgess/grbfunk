@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/grburgess/grbfunk/branch/master/graph/badge.svg)](https://codecov.io/gh/grburgess/grbfunk)
 
 # GRB Funk
-
+![alt text](https://raw.githubusercontent.com/grburgess/grbfunk/master/external/grbfunk.png)
 Broadcasting mad GRB vibes to your earholes... well your phone holes. Thanks to *amazing* era of multi-messenger astronomy, the original [GCN](https://gcn.gsfc.nasa.gov) system's email distribution has made my email useless for following GRB alerts. Thus, I made this little tool to bump things to telegram thanks to the [pygcn](https://github.com/lpsinger/pygcn) package. 
 
 **grbfunk** is highly customized for what I want to see, but fell free to use it as your own model.
