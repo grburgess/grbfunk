@@ -17,7 +17,9 @@ VERSION = None
 
 REQUIRED = [
     "python-telegram-bot",
-    "pygcn"
+    "pygcn",
+    "pyyaml"
+    
 
 ]
 

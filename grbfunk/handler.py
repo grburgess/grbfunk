@@ -16,18 +16,19 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
         _DEBUG = True
 
 
-path = os.path.join(os.path.expanduser("~"), ".grbfunk", "access.yaml")
+if not _DEBUG
+    path = os.path.join(os.path.expanduser("~"), ".grbfunk", "access.yaml")
 
-with open(path) as f:
-    # The FullLoader parameter handles the conversion from YAML
-    # scalar values to Python the dictionary format
-    access = yaml.load(f, Loader=yaml.SafeLoader)
+    with open(path) as f:
+        # The FullLoader parameter handles the conversion from YAML
+        # scalar values to Python the dictionary format
+        access = yaml.load(f, Loader=yaml.SafeLoader)
 
-token = access["token"]
-chat_id = access["chat_id"]
+    token = access["token"]
+    chat_id = access["chat_id"]
 
 
-bot = telegram.Bot(token=token)
+    bot = telegram.Bot(token=token)
 
 
 @gcn.include_notice_types(
