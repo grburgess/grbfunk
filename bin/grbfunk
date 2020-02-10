@@ -4,7 +4,7 @@ from grbfunk import handler
 import coloredlogs, logging
 import telegram
 import os
-import yampl
+import yaml
 
 
 import grbfunk.utils.log
