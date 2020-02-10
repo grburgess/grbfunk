@@ -28,4 +28,4 @@ def get_path_of_user_dir():
     :return: an absolute path
     """
 
-    return os.path.abspath(os.path.expanduser('~/.grbfunk'))
+    return os.path.abspath(os.path.expanduser("~/.grbfunk"))

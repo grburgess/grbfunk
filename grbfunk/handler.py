@@ -2,12 +2,10 @@ import gcn
 import telegram
 import yaml
 import lxml.etree
-import os
 
 from grbfunk.notification_lookup import notification_lookup
-from grbfunk.utils.log import logger
 
-
+import os
 
 
 _DEBUG = False
@@ -21,7 +19,7 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 if not _DEBUG:
 
     # we do not want to try and load all the tokens if they aren't there
-    
+
     path = os.path.join(os.path.expanduser("~"), ".grbfunk", "access.yaml")
 
     with open(path) as f:
@@ -31,7 +29,6 @@ if not _DEBUG:
 
     token = access["token"]
     chat_id = access["chat_id"]
-
 
     bot = telegram.Bot(token=token)
 
@@ -44,25 +41,17 @@ if not _DEBUG:
 )
 def handler(payload, root):
 
-    logger.info('recevived alert!')
-
-    
     alert_type = int(root.find(".//Param[@name='Packet_Type']").attrib["value"])
 
     notification = notification_lookup[alert_type](root)
 
     # only send messages if we are NOT testing
 
-    logger.info('preparing to send notifications')
-    
     if not _DEBUG:
         bot.send_message(chat_id=chat_id, text=notification.message)
 
         for descr, download in notification.downloads.items():
 
-            logger.info(f'sending plots for {descr}')
-            
             bot.send_photo(chat_id=chat_id, photo=open(download, "rb"), caption=descr)
 
-    logger.info('finished sending messages, preparing to clean up')
     notification.cleanup()

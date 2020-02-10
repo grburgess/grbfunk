@@ -2,11 +2,25 @@
 import gcn
 from grbfunk import handler
 import coloredlogs, logging
+import telegram
+
+
 
 import grbfunk.utils.log
 
 logger = logging.getLogger("grbfunk.main")
 
 logger.info('SPIN UP')
+path = os.path.join(os.path.expanduser("~"), ".grbfunk", "access.yaml")
+
+with open(path) as f:
+     access = yaml.load(f, Loader=yaml.SafeLoader)
+
+     token = access["token"]
+     chat_id = access["chat_id"]
+
+bot = telegram.Bot(token=token)
+
+bot.send_message(chat_id=chat_id, text='GRB Funk has started blasting events to your earholes')
 
 gcn.listen(handler=handler)
