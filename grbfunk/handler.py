@@ -9,12 +9,11 @@ import os
 
 
 _DEBUG = False
-if os.environ.get('GRBFUNK_DEBUG') is not None:
+if os.environ.get("GRBFUNK_DEBUG") is not None:
 
-    if os.environ.get('GRBFUNK_DEBUG') == 'True':
+    if os.environ.get("GRBFUNK_DEBUG") == "True":
 
         _DEBUG = True
-    
 
 
 path = os.path.join(os.path.expanduser("~"), ".grbfunk", "access.yaml")
@@ -39,18 +38,17 @@ bot = telegram.Bot(token=token)
 )
 def handler(payload, root):
 
-    # if _DEBUG:
-    #     tmp_root = lxml.etree.parse(open(root, "r"))
-    #     alert_type = tmp_root.find(".//Param[@name='Packet_Type']").attrib["value"]
-    
     alert_type = int(root.find(".//Param[@name='Packet_Type']").attrib["value"])
 
     notification = notification_lookup[alert_type](root)
 
-    bot.send_message(chat_id=chat_id, text=notification.message)
+    # only send messages if we are NOT testing
 
-    for descr, download in notification.downloads.items():
+    if not _DEBUG:
+        bot.send_message(chat_id=chat_id, text=notification.message)
 
-        bot.send_photo(chat_id=chat_id, photo=open(download, 'rb'), caption=descr)
+        for descr, download in notification.downloads.items():
+
+            bot.send_photo(chat_id=chat_id, photo=open(download, "rb"), caption=descr)
 
     notification.cleanup()
