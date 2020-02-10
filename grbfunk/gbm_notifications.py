@@ -35,7 +35,7 @@ class GBMNotification(Notification):
         """
         tmp = self._root.find(".//{*}ISOTime").text
         yy, mm, dd = re.match(
-            r'^\d{2}(\d{2})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}\.\d{2}$', tmp
+            r"^\d{2}(\d{2})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}\.\d{2}$", tmp
         ).groups()
 
         self._burst_name = f"GRB{yy}{mm}{dd}xxx"
@@ -48,7 +48,7 @@ class GBMNotification(Notification):
         :rtype: 
 
         """
-        
+
         lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
 
         directory = os.path.join("/tmp", self._burst_name)
@@ -82,14 +82,14 @@ class GBMLocationNotification(GBMNotification):
         super(GBMLocationNotification, self).action()
 
         # parse the location info
-        
+
         pos2d = self._root.find(".//{*}Position2D")
         ra = float(pos2d.find(".//{*}C1").text)
         dec = float(pos2d.find(".//{*}C2").text)
         radius = float(pos2d.find(".//{*}Error2Radius").text)
 
         # add the location informatioon onto the message
-        
+
         self._add_line_to_msg(f"RA: {ra}")
         self._add_line_to_msg(f"Dec: {dec}")
         self._add_line_to_msg(f"Err: {radius}")
@@ -100,11 +100,11 @@ class GBMFLTNotification(GBMLocationNotification):
 
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
 
-    def action(self):
+    # def action(self):
 
-        super(GBMFLTNotification, self).action()
+    #     super(GBMFLTNotification, self).action()
 
-        self._get_light_curve_file()
+    #     self._get_light_curve_file()
 
 
 class GBMGNDNotification(GBMLocationNotification):
@@ -112,11 +112,11 @@ class GBMGNDNotification(GBMLocationNotification):
 
         super(GBMGNDNotification, self).__init__(root=root, notify_type="GND Position")
 
-    def action(self):
+    # def action(self):
 
-        super(GBMGNDNotification, self).action()
+    #     super(GBMGNDNotification, self).action()
 
-        self._get_light_curve_file()
+    #     self._get_light_curve_file()
 
 
 class GBMFinalNotification(GBMLocationNotification):
