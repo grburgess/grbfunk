@@ -112,11 +112,11 @@ class GBMGNDNotification(GBMLocationNotification):
 
         super(GBMGNDNotification, self).__init__(root=root, notify_type="GND Position")
 
-    # def action(self):
+    def action(self):
 
-    #     super(GBMGNDNotification, self).action()
+        super(GBMGNDNotification, self).action()
 
-    #     self._get_light_curve_file()
+        self._get_light_curve_file()
 
 
 class GBMFinalNotification(GBMLocationNotification):
