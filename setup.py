@@ -18,7 +18,8 @@ VERSION = None
 REQUIRED = [
     "python-telegram-bot",
     "pygcn",
-    "pyyaml"
+    "pyyaml",
+    "coloredlogs"
     
 
 ]
