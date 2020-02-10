@@ -2,10 +2,12 @@ import gcn
 import telegram
 import yaml
 import lxml.etree
+import os
 
 from grbfunk.notification_lookup import notification_lookup
+from grbfunk.utils.log import logger
 
-import os
+
 
 
 _DEBUG = False
@@ -42,17 +44,25 @@ if not _DEBUG:
 )
 def handler(payload, root):
 
+    logger.info('recevived alert!')
+
+    
     alert_type = int(root.find(".//Param[@name='Packet_Type']").attrib["value"])
 
     notification = notification_lookup[alert_type](root)
 
     # only send messages if we are NOT testing
 
+    logger.info('preparing to send notifications')
+    
     if not _DEBUG:
         bot.send_message(chat_id=chat_id, text=notification.message)
 
         for descr, download in notification.downloads.items():
 
+            logger.info(f'sending plots for {descr}')
+            
             bot.send_photo(chat_id=chat_id, photo=open(download, "rb"), caption=descr)
 
+    logger.info('finished sending messages, preparing to clean up')
     notification.cleanup()
