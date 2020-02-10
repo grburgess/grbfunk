@@ -1,7 +1,10 @@
 import os
 import re
-
+import coloredlogs, logging
 from grbfunk.notifications import Notification
+import grbfunk.utils.log
+
+logger = logging.getLogger("grbfunk.notification.GBM")
 
 
 class GBMNotification(Notification):
@@ -17,15 +20,23 @@ class GBMNotification(Notification):
 
         """
 
+
+
+        
         super(GBMNotification, self).__init__(
             instrument_name="GBM", root=root, notify_type=notify_type
         )
 
+
+        logger.debug("GBM notification is being created")
+        
     def action(self):
 
         # parse the name of the GRB
         self._form_burst_name()
 
+        logger.info(f'Start to process {self._burst_name}')
+        
         # add it to the list
         self._add_line_to_msg(f"Name: {self._burst_name}")
 
@@ -49,14 +60,20 @@ class GBMNotification(Notification):
 
         """
 
+        logger.debug(f'{self._burst_name} is about to find its lightcurve file')
+        
         lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
 
         directory = os.path.join("/tmp", self._burst_name)
 
         if not os.path.exists(directory):
 
+            logger.debug(f'{self._burst_name} is making a directory to store file ({directory})')
+            
             os.mkdir(directory)
 
+        logger.debug(f'{self._burst_name} is attempting to download its light curve plot')
+            
         self._lc_file = self._download(lc_file, directory, "GBM Lightcurve")
 
 
@@ -82,6 +99,8 @@ class GBMLocationNotification(GBMNotification):
         super(GBMLocationNotification, self).action()
 
         # parse the location info
+
+        logger.debug(f'{self._burst_name} is gathering the location info')
 
         pos2d = self._root.find(".//{*}Position2D")
         ra = float(pos2d.find(".//{*}C1").text)
@@ -142,8 +161,11 @@ class GBMFinalNotification(GBMLocationNotification):
 
         if not os.path.exists(directory):
 
+            logger.debug(f'{self._burst_name} is making a directory to store file ({directory})')
+
             os.mkdir(directory)
 
+        logger.debug(f'{self._burst_name} is attempting to download its GBM position plot')
         self._pos_file = self._download(pos_file, directory, "GBM 'Official' Position")
 
         
