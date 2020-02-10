@@ -1,6 +1,7 @@
 import gcn
 import telegram
 import yaml
+import lxml.etree
 
 from grbfunk.notification_lookup import notification_lookup
 
@@ -38,9 +39,9 @@ bot = telegram.Bot(token=token)
 )
 def handler(payload, root):
 
-    if _DEBUG:
-        tmp_root = lxml.etree.parse(open(root, "r"))
-        alert_type = tmp_root.find(".//Param[@name='Packet_Type']").attrib["value"]
+    # if _DEBUG:
+    #     tmp_root = lxml.etree.parse(open(root, "r"))
+    #     alert_type = tmp_root.find(".//Param[@name='Packet_Type']").attrib["value"]
     
     alert_type = int(root.find(".//Param[@name='Packet_Type']").attrib["value"])
 

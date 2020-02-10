@@ -20,6 +20,7 @@ class Notification(object):
     def __init__(self, root, instrument_name, notify_type):
         """
         
+        Generic notification
         
 
         :param root: 
@@ -33,13 +34,13 @@ class Notification(object):
         self._instrument_name = instrument_name
         self._notify_type = notify_type
         
-        if _DEBUG:
+        # if _DEBUG:
         
-            self._root = lxml.etree.parse(open(root, "r"))
+        #     self._root = lxml.etree.parse(open(root, "r"))
 
-        else:
-            
-            self._root = root
+#        else:
+
+        self._root = root
 
         self._downloads = collections.OrderedDict()
         self._message = ""

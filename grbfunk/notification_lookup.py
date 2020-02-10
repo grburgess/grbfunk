@@ -1,5 +1,5 @@
 import gcn
-from gbm_notifications import *
+from grbfunk.gbm_notifications import *
 
 notification_lookup = {
     gcn.notice_types.FERMI_GBM_ALERT: GBMAlertNotification,

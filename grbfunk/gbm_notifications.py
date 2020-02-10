@@ -35,7 +35,7 @@ class GBMNotification(Notification):
         """
         tmp = self._root.find(".//{*}ISOTime").text
         yy, mm, dd = re.match(
-            "^\d\d(\d\d)-(\d\d)-(\d\d)T\d\d:\d\d:\d\d\.\d\d$", tmp
+            r'^\d{2}(\d{2})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}\.\d{2}$', tmp
         ).groups()
 
         self._burst_name = f"GRB{yy}{mm}{dd}xxx"
