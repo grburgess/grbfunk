@@ -16,7 +16,10 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
         _DEBUG = True
 
 
-if not _DEBUG
+if not _DEBUG:
+
+    # we do not want to try and load all the tokens if they aren't there
+    
     path = os.path.join(os.path.expanduser("~"), ".grbfunk", "access.yaml")
 
     with open(path) as f:
