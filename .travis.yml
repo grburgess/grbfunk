@@ -1,0 +1,20 @@
+language: python
+python:
+  # We don't actually use the Travis Python, but this keeps it organized.
+  - "3.5"
+  - "3.6"
+  - "3.7"
+install:
+  - pip install --upgrade pytest pytest-cov codecov
+  - python setup.py install
+env:
+  GRBFUNK_DEBUG=True
+
+script:
+  - chmod u+x deploy/version.sh
+  - python -m pytest -vv --cov=grbfunk/
+  #- "./deploy/version.sh"
+
+  
+
+  - codecov --token=15145a76-8e53-4122-9d1b-ab5396fbba1e
