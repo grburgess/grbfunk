@@ -1,5 +1,4 @@
 from setuptools.command.build_ext import build_ext as _build_ext
-from Cython.Build import cythonize
 from setuptools import setup, find_packages, Command, Extension
 import os
 import io
@@ -18,7 +17,9 @@ VERSION = None
 
 REQUIRED = [
     "python-telegram-bot",
-    "pygcn"
+    "pygcn",
+    "pyyaml"
+    
 
 ]
 
@@ -96,7 +97,7 @@ def find_data_files(directory):
     return paths
 
 
-#extra_files = find_data_files("popsynth/data")
+extra_files = find_data_files("grbfunk/data")
 
 
 setup(
@@ -113,7 +114,7 @@ setup(
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
- #   package_data={"": extra_files},
+    package_data={"": extra_files},
     license="GPL3",
     cmdclass={"upload": UploadCommand},
 )
