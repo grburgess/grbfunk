@@ -131,7 +131,22 @@ class GBMFinalNotification(GBMLocationNotification):
         super(GBMFinalNotification, self).action()
 
         self._get_light_curve_file()
+        self._get_position_plot()
 
+
+    def _get_position_plot(self):
+
+        pos_file = self._root.find(".//Param[@name='LocationMap_URL']").attrib["value"]
+
+        directory = os.path.join("/tmp", self._burst_name)
+
+        if not os.path.exists(directory):
+
+            os.mkdir(directory)
+
+        self._pos_file = self._download(pos_file, directory, "GBM 'Official' Position")
+
+        
 
 class GBMAlertNotification(GBMNotification):
     def __init__(self, root):
