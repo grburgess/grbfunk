@@ -56,7 +56,7 @@ class GBMNotification(Notification):
 
         frac = int(np.floor(time_frac * 1000))
 
-        self._burst_name = f"GRB{yy}{mm}{dd}{fracPu}"
+        self._burst_name = f"GRB{yy}{mm}{dd}{frac}"
 
     def _get_light_curve_file(self):
         """
