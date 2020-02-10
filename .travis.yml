@@ -11,7 +11,7 @@ env:
   GRBFUNK_DEBUG=True
 
 script:
-  - chmod u+x deploy/version.sh
+#  - chmod u+x deploy/version.sh
   - python -m pytest -vv --cov=grbfunk/
   #- "./deploy/version.sh"
 
