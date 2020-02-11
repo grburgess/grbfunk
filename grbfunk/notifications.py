@@ -40,7 +40,6 @@ class Notification(object):
         self._notify_type = notify_type
         self._process_counter = _global_proccess_counter
 
-        
         logger.debug(f"constructing {instrument_name} {notify_type} notification")
 
         self._bot = bot
@@ -94,6 +93,7 @@ class Notification(object):
 
             downloader = BackgroundDownload(
                 url,
+                self._process_counter,
                 bot=self._bot,
                 description=description,
                 wait_time=60,
@@ -102,7 +102,9 @@ class Notification(object):
 
         else:
 
-            downloader = BackgroundDownload(url, wait_time=60, max_time=60 * 60)
+            downloader = BackgroundDownload(
+                url, self._process_counter, wait_time=60, max_time=60 * 60
+            )
 
     def print(self):
 
