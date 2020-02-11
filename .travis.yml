@@ -3,7 +3,7 @@ python:
 - '3.6'
 - '3.7'
 install:
-- pip install --upgrade pytest pytest-cov codecov
+- pip install --upgrade pytest pytest-cov codecov numpy>=1.16
 - python setup.py install
 env:
   matrix:
