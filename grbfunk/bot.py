@@ -10,7 +10,6 @@ import grbfunk.utils.log
 logger = logging.getLogger("grbfunk.bot")
 
 
-
 _DEBUG = False
 if os.environ.get("GRBFUNK_DEBUG") is not None:
 
@@ -18,6 +17,8 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
         _DEBUG = True
 
+    # for travisCI
+    _TRAVIS_TOKEN = os.environ("TOKEN")
 
 
 class Bot(object):
@@ -35,20 +36,22 @@ class Bot(object):
         logger.debug(f"{name} bot is being constructed")
 
         # create the bot
-        self._bot = telegram.Bot(token=token)
 
         self._name = name
         self._chat_id = chat_id
 
-
-        
         if _DEBUG:
 
             # if we are testing we send stuff to a special
             # chat. go ahead and spam me
-            
-            self._chat_id = '-1001284769525'
-        
+
+            self._chat_id = "-1001284769525"
+            if _TRAVIS_TOKEN is not None:
+
+                token = _TRAVIS_TOKEN
+
+        self._bot = telegram.Bot(token=token)
+
         self._msg_header = f"{self._name} says:\n"
 
     def speak(self, message):
@@ -97,8 +100,8 @@ class GBMBot(Bot):
 
         """
 
-        access = get_access_file()
         token = access["token"]
+        access = get_access_file()
         chat_id = access["chat_id"]
 
         super(GBMBot, self).__init__(name="GBM", token=token, chat_id=chat_id)
