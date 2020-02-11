@@ -3,11 +3,13 @@ import os
 import lxml.etree
 import gcn
 import collections
-import coloredlogs, logging
-
-
 from grbfunk.utils.download_file import download_file
+
+import coloredlogs, logging
 import grbfunk.utils.log
+
+
+
 
 logger = logging.getLogger("grbfunk.notification")
 
@@ -21,7 +23,7 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
 
 class Notification(object):
-    def __init__(self, root, instrument_name, notify_type):
+    def __init__(self, root, instrument_name, notify_type, bot=None):
         """
         
         Generic notification
@@ -30,6 +32,7 @@ class Notification(object):
         :param root: 
         :param instrument_name: 
         :param notify_type: 
+        :param bot: the notifier's bot
         :returns: 
         :rtype: 
 
@@ -40,12 +43,8 @@ class Notification(object):
 
         logger.debug(f"constructing {instrument_name} {notify_type} notification")
 
-        # if _DEBUG:
-
-        #     self._root = lxml.etree.parse(open(root, "r"))
-
-        #        else:
-
+        self._bot = bot
+        
         self._root = root
 
         self._downloads = collections.OrderedDict()
@@ -54,6 +53,12 @@ class Notification(object):
         self._build_message_header()
         self._build_message()
 
+        # if not _DEBUG:
+        #     self._bot.speak(self._message)
+
+        self._bot.speak(self._message)
+
+        
     def _add_line_to_msg(self, line):
         self._message += f"{line}\n"
         logger.debug(
