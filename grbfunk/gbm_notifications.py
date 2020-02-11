@@ -74,21 +74,7 @@ class GBMNotification(Notification):
 
         lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
 
-        directory = os.path.join("/tmp", self._burst_name)
-
-        if not os.path.exists(directory):
-
-            logger.debug(
-                f"{self._burst_name} is making a directory to store file ({directory})"
-            )
-
-            os.mkdir(directory)
-
-        logger.debug(
-            f"{self._burst_name} is attempting to download its light curve plot"
-        )
-
-        self._lc_file = self._download(lc_file, directory, "GBM Lightcurve")
+        self._download(lc_file, "GBM Lightcurve", use_bot=True)
 
 
 class GBMLocationNotification(GBMNotification):
@@ -170,20 +156,11 @@ class GBMFinalNotification(GBMLocationNotification):
 
         pos_file = self._root.find(".//Param[@name='LocationMap_URL']").attrib["value"]
 
-        directory = os.path.join("/tmp", self._burst_name)
-
-        if not os.path.exists(directory):
-
-            logger.debug(
-                f"{self._burst_name} is making a directory to store file ({directory})"
-            )
-
-            os.mkdir(directory)
-
         logger.debug(
             f"{self._burst_name} is attempting to download its GBM position plot"
         )
-        self._pos_file = self._download(pos_file, directory, "GBM 'Official' Position")
+
+        self._download(pos_file, "GBM 'Official' Position", use_bot=True)
 
 
 class GBMAlertNotification(GBMNotification):

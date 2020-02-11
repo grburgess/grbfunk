@@ -81,7 +81,7 @@ class Notification(object):
         )
         self.action()
 
-    def _download(self, url, description, use_bot=True):
+    def _download(self, url, description, path=None, use_bot=True):
 
         logger.debug(
             f"{self._instrument_name} {self._notify_type} is about to download '{url}' to '{path}'"
