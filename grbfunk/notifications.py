@@ -92,7 +92,7 @@ class Notification(object):
 
             downloader = BackgroundDownload(
                 url,
-                bot=self.bot,
+                bot=self._bot,
                 description=description,
                 wait_time=60,
                 max_time=60 * 60,
