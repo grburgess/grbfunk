@@ -4,6 +4,7 @@ import numpy as np
 from datetime import datetime, timedelta
 import coloredlogs, logging
 from grbfunk.notifications import Notification
+from grbfunk.bot import GBMBot
 import grbfunk.utils.log
 
 logger = logging.getLogger("grbfunk.notification.GBM")
@@ -22,8 +23,10 @@ class GBMNotification(Notification):
 
         """
 
+        bot = GBMBot()
+        
         super(GBMNotification, self).__init__(
-            instrument_name="GBM", root=root, notify_type=notify_type
+            instrument_name="GBM", root=root, notify_type=notify_type, bot=bot
         )
 
         logger.debug("GBM notification is being created")
