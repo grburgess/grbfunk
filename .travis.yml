@@ -11,5 +11,5 @@ env:
   global:
     secure: HkdCTxdfgswxLgApGi55ooLMKTpVl5xiVDp3dEec15Sodq6eHV0D39MonaB/G8mdOXqOrQXDVamruF9j4c+GOieV5End81FLTsGlio/xK3yk4Ii9VRwzm0mjRIk9NoaNluvYC121I9ocjaIrYKpiA6E/e6g1Jbp5oqE60cKZ25quQOk4ixQwd56/uXGjFHWGD+nItrMLeesGXgAumx/E+hX3OtiukAcnZ9/BGs2+k8uOlGhuSbQ9X25MXTOsleHAwkqiZYIaz2GF+xJEKVfkO3b79v+lZUGtkE9LcmPpmLorLtUadkoRWuNTxc3iA1g3JJJ1qdruI62cscSuNjT6ENJJ+9Tnl8lG+7k8dcmiuVjEJm1frDwTbGucrOMZ+4KJ9TXdoJqcjlBUaTfjK8b7hoQY5jREIRNLECKEWsztuMpTKdM5uYFPQD8Vv4bWAQSNhoQCLUzroxiKVxGZPom6Ggzs+BxecuwyCODDWH3BO0Rgt1Ro2hUiwdLuo9sAcnwO6fXTLoILf22Twp5C8101h1nTIkBB8Xw8VXiYQcwpI6U9QPxzmZQ4Jqyk1+R3NliNuytYITjuMCBP8JYXld75pRB+kNKMjCuhfa33jiADwNC4KDSCZ3EJYzAVXiprx1E2aqnSZWbdbzP44NrKyzoAa0TZpJT+4J0QlAA+i/0D4n8=
 script:
-- python -m pytest -vv --log-cli-level=DEBUG   --cov=grbfunk/
+- python -m pytest -vv -s --log-cli-level=DEBUG   --cov=grbfunk/
 - codecov --token=15145a76-8e53-4122-9d1b-ab5396fbba1e
