@@ -11,6 +11,7 @@ logger = logging.getLogger("grbfunk.bot")
 
 
 _DEBUG = False
+_TESTING = False
 if os.environ.get("GRBFUNK_DEBUG") is not None:
 
     if os.environ.get("GRBFUNK_DEBUG") == "True":
@@ -19,7 +20,9 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
     # for travisCI
     _TRAVIS_TOKEN = os.environ.get("TOKEN")
+    if _TRAVIS_TOKEN is not None:
 
+        _TESTING = True
 
 class Bot(object):
     def __init__(self, name, token, chat_id):
@@ -41,7 +44,7 @@ class Bot(object):
         self._chat_id = chat_id
 
         if _DEBUG:
-
+            
             # if we are testing we send stuff to a special
             # chat. go ahead and spam me
 
@@ -100,8 +103,13 @@ class GBMBot(Bot):
 
         """
 
-        token = access["token"]
-        access = get_access_file()
-        chat_id = access["chat_id"]
+        token = None
+        chat_id = None
 
+        if not _TESTING:
+            access = get_access_file()
+            chat_id = access["chat_id"]
+            token = access["token"]
+
+        
         super(GBMBot, self).__init__(name="GBM", token=token, chat_id=chat_id)
