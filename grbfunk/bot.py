@@ -18,7 +18,7 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
         _DEBUG = True
 
     # for travisCI
-    _TRAVIS_TOKEN = os.environ("TOKEN")
+    _TRAVIS_TOKEN = os.environ.get("TOKEN")
 
 
 class Bot(object):
