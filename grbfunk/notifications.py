@@ -3,11 +3,11 @@ import os
 import lxml.etree
 import gcn
 import collections
+from grbfunk.utils.download_file import BackgroundDownload
+from grbfunk.utils.process_counter import _global_proccess_counter
 import coloredlogs, logging
-
-
-from grbfunk.utils.download_file import download_file
 import grbfunk.utils.log
+
 
 logger = logging.getLogger("grbfunk.notification")
 
@@ -21,7 +21,7 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
 
 class Notification(object):
-    def __init__(self, root, instrument_name, notify_type):
+    def __init__(self, root, instrument_name, notify_type, bot=None):
         """
         
         Generic notification
@@ -30,6 +30,7 @@ class Notification(object):
         :param root: 
         :param instrument_name: 
         :param notify_type: 
+        :param bot: the notifier's bot
         :returns: 
         :rtype: 
 
@@ -37,14 +38,11 @@ class Notification(object):
 
         self._instrument_name = instrument_name
         self._notify_type = notify_type
+        self._process_counter = _global_proccess_counter
 
         logger.debug(f"constructing {instrument_name} {notify_type} notification")
 
-        # if _DEBUG:
-
-        #     self._root = lxml.etree.parse(open(root, "r"))
-
-        #        else:
+        self._bot = bot
 
         self._root = root
 
@@ -53,6 +51,11 @@ class Notification(object):
 
         self._build_message_header()
         self._build_message()
+
+        # if not _DEBUG:
+        #     self._bot.speak(self._message)
+
+        self._bot.speak(self._message)
 
     def _add_line_to_msg(self, line):
         self._message += f"{line}\n"
@@ -79,28 +82,29 @@ class Notification(object):
         )
         self.action()
 
-    def _download(self, url, path, description):
+    def _download(self, url, description, path=None, use_bot=True):
 
         logger.debug(
             f"{self._instrument_name} {self._notify_type} is about to download '{url}' to '{path}'"
         )
 
-        try:
-            tmp = download_file(url, path)
+        # create a downloader in the background
+        if use_bot:
 
-            logger.info(f"Succesfully downloaded '{url}' to '{path}'")
-
-            self._downloads[description] = tmp
-
-            return tmp
-
-        except:
-
-            logger.warning(
-                f"{self._instrument_name} {self._notify_type} could not download {url}"
+            downloader = BackgroundDownload(
+                url,
+                self._process_counter,
+                bot=self._bot,
+                description=description,
+                wait_time=60,
+                max_time=60 * 60,
             )
 
-            return None
+        else:
+
+            downloader = BackgroundDownload(
+                url, self._process_counter, wait_time=60, max_time=60 * 60
+            )
 
     def print(self):
 
