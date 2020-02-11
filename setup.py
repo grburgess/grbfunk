@@ -21,7 +21,8 @@ REQUIRED = [
     "pyyaml",
     "coloredlogs",
     "requests",
-    "numpy"
+    "numpy",
+    "astropy"
     
 
 ]
