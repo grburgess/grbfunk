@@ -22,7 +22,7 @@ REQUIRED = [
     "coloredlogs",
     "requests",
     "astropy",
-    "numpy",
+    "numpy>=1.16",
 
     
 
