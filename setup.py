@@ -16,13 +16,13 @@ REQUIRES_PYTHON = ">=3.5.0"
 VERSION = None
 
 REQUIRED = [
+    "numpy",
     "python-telegram-bot",
     "pygcn",
     "pyyaml",
     "coloredlogs",
     "requests",
     "astropy",
-    "numpy>=1.16",
 
     
 
