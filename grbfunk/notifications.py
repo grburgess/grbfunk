@@ -4,7 +4,7 @@ import lxml.etree
 import gcn
 import collections
 from grbfunk.utils.download_file import BackgroundDownload
-
+from grbfunk.utils.process_counter import _global_proccess_counter
 import coloredlogs, logging
 import grbfunk.utils.log
 
@@ -38,7 +38,9 @@ class Notification(object):
 
         self._instrument_name = instrument_name
         self._notify_type = notify_type
+        self._process_counter = _global_proccess_counter
 
+        
         logger.debug(f"constructing {instrument_name} {notify_type} notification")
 
         self._bot = bot

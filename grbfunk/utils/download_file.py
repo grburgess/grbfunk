@@ -22,7 +22,7 @@ def download_file(url, path="/tmp"):
 
 
 class BackgroundDownload(object):
-    def __init__(self, url, bot=None, description=None, wait_time=60, max_time=60 * 60):
+    def __init__(self, url, process_counter ,bot=None, description=None, wait_time=60, max_time=60 * 60):
         """
         An worker to download objects in the background to avoid blocking the GCN
         listen function.
@@ -47,8 +47,11 @@ class BackgroundDownload(object):
         self._bot = bot
         self._description = description
 
+        self._process_counter = process_counter
+
         # create a background thread that will go and download the files
-        
+
+        self._process_counter.add_proccess()
         thread = threading.Thread(target=self._run, args=())
         thread.daemon = True
         thread.start()
@@ -117,7 +120,7 @@ class BackgroundDownload(object):
                     logging.debug(f"we have {self._max_time - time_spent} seconds left before I give up")
                     
                     time_spent += self._wait_time
-
+        self._process_counter.kill_process()
 
 # def download_file(url, path="/tmp"):
 #     """
