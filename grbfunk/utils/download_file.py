@@ -1,5 +1,7 @@
 import os
+
 import requests
+from astropy.utils.data import download_file as astro_download
 
 
 def download_file(url, path="/tmp"):
@@ -8,13 +10,23 @@ def download_file(url, path="/tmp"):
     """
 
     fname = url.split("/")[-1]
-    path = os.path.join(path, fname)
+    return astro_download(url)
 
-    r = requests.get(url, stream=True)
 
-    with open(path, "wb") as f:
 
-        for ch in r:
+# def download_file(url, path="/tmp"):
+#     """
+#     Download a file to the given path
+#     """
 
-            f.write(ch)
-    return path
+#     fname = url.split("/")[-1]
+#     path = os.path.join(path, fname)
+
+#     r = requests.get(url, stream=True)
+
+#     with open(path, "wb") as f:
+
+#         for ch in r:
+
+#             f.write(ch)
+#     return path
