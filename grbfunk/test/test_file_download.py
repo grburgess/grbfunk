@@ -47,6 +47,6 @@ def test_background_download_timeout():
 
     url = "http://0.0.0.0:8080/clowns.txt"
 
-    dl = BackgroundDownload(url, wait_time=1, max_time=9)
+    dl = BackgroundDownload(url, _global_proccess_counter, wait_time=1, max_time=9)
 
     time.sleep(10)
