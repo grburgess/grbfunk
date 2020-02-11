@@ -3,12 +3,10 @@ import os
 import lxml.etree
 import gcn
 import collections
-from grbfunk.utils.download_file import download_file
+from grbfunk.utils.download_file import BackgroundDownload
 
 import coloredlogs, logging
 import grbfunk.utils.log
-
-
 
 
 logger = logging.getLogger("grbfunk.notification")
@@ -44,7 +42,7 @@ class Notification(object):
         logger.debug(f"constructing {instrument_name} {notify_type} notification")
 
         self._bot = bot
-        
+
         self._root = root
 
         self._downloads = collections.OrderedDict()
@@ -58,7 +56,6 @@ class Notification(object):
 
         self._bot.speak(self._message)
 
-        
     def _add_line_to_msg(self, line):
         self._message += f"{line}\n"
         logger.debug(
@@ -84,28 +81,26 @@ class Notification(object):
         )
         self.action()
 
-    def _download(self, url, path, description):
+    def _download(self, url, description, use_bot=True):
 
         logger.debug(
             f"{self._instrument_name} {self._notify_type} is about to download '{url}' to '{path}'"
         )
 
-        try:
-            tmp = download_file(url, path)
+        # create a downloader in the background
+        if use_bot:
 
-            logger.info(f"Succesfully downloaded '{url}' to '{path}'")
-
-            self._downloads[description] = tmp
-
-            return tmp
-
-        except:
-
-            logger.warning(
-                f"{self._instrument_name} {self._notify_type} could not download {url}"
+            downloader = BackgroundDownload(
+                url,
+                bot=self.bot,
+                description=description,
+                wait_time=60,
+                max_time=60 * 60,
             )
 
-            return None
+        else:
+
+            downloader = BackgroundDownload(url, wait_time=60, max_time=60 * 60)
 
     def print(self):
 

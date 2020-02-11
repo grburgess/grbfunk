@@ -26,13 +26,14 @@ def download_file(url, path="/tmp"):
 class BackgroundDownload(object):
 
 
-    def __init__(self, url, bot=None,wait_time=60, max_time=60*60):
+    def __init__(self, url, bot=None, description=None, wait_time=60, max_time=60*60):
 
         self._wait_time = wait_time
         self._max_time = max_time
         
         self._url = url
         self._bot = bot
+        self._description = description
 
 
         thread = threading.Thread(target=self._run, args=())
@@ -60,7 +61,7 @@ class BackgroundDownload(object):
 
                 if self._bot is not None:
 
-                    self._bot.show(path, 'add des')
+                    self._bot.show(path, self._description)
 
                 flag = False
                 
