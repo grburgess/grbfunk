@@ -20,7 +20,6 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
     # for travisCI
     _TRAVIS_TOKEN = os.environ.get("TOKEN")
-    print(_TRAVIS_TOKEN)
     
     if _TRAVIS_TOKEN is not None:
 
