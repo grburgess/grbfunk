@@ -14,14 +14,13 @@ logger = logging.getLogger("grbfunk.processcounter")
 class ProcessCounter(object):
     _instance = None
 
-
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-        #    print('Creating the object')
+            #    print('Creating the object')
             cls._instance = super(ProcessCounter, cls).__new__(cls)
             # Put any initialization here.
         return cls._instance
-    
+
     def __init__(self, max_procs=1000, report_interval=60 * 5):
         """
         
@@ -81,10 +80,13 @@ class ProcessCounter(object):
 
         """
 
-        logger.info('A thread was just launched')
-        
+        logger.info("A thread was just launched")
+
         self._n_procs_running += 1
         self._total_procs_launched += 1
+
+        logger.debug(f"now there are {self._n_procs_running} processes")
+
         if self._n_procs_running > self._max_procs:
 
             logger.warning(f"you are running more than {self._max_procs}!!")
@@ -98,15 +100,13 @@ class ProcessCounter(object):
         :rtype: 
 
         """
-        
-        
 
         self._n_procs_running -= 1
         self._total_procs_killed += 1
         assert self._n_procs_running >= 0, "why do we have negative processess??"
 
-        logger.info('A thread was just killed')
-
+        logger.info("A thread was just killed")
+        logger.debug(f"now there are {self._n_procs_running} processes")
 
 
 _global_proccess_counter = ProcessCounter()
