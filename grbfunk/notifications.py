@@ -82,7 +82,9 @@ class Notification(object):
         )
         self.action()
 
-    def _download(self, url, description, path=None, use_bot=True):
+    def _download(
+        self, url, description, path=None, use_bot=True, wait_time=60, max_time=60 * 60
+    ):
 
         logger.debug(
             f"{self._instrument_name} {self._notify_type} is about to download '{url}' to '{path}'"
@@ -96,14 +98,20 @@ class Notification(object):
                 self._process_counter,
                 bot=self._bot,
                 description=description,
-                wait_time=60,
-                max_time=60 * 60,
+                wait_time=wait_time,
+                max_time=max_time,
             )
 
         else:
 
+            assert path is not None, "there is no path set!"
+
             downloader = BackgroundDownload(
-                url, self._process_counter, wait_time=60, max_time=60 * 60
+                url,
+                self._process_counter,
+                store_path=path,
+                wait_time=wait_time,
+                max_time=max_time,
             )
 
     def print(self):
