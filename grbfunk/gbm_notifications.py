@@ -9,6 +9,25 @@ import grbfunk.utils.log
 
 logger = logging.getLogger("grbfunk.notification.GBM")
 
+_gbm_detectors = (
+        "n0",
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "na",
+        "nb",
+        "b0",
+        "b1",
+    )
+
+
+
 
 class GBMNotification(Notification):
     _current_grbs = {}
@@ -65,6 +84,8 @@ class GBMNotification(Notification):
         frac = int(np.floor(time_frac * 1000))
 
         self._burst_name = f"GRB{yy}{mm}{dd}{frac}"
+
+        self._burst_number = f"{yy}{mm}{dd}{frac}"
         
         if self._burst_name not in  GBMNotification._current_grbs:
 
@@ -138,12 +159,74 @@ class GBMFLTNotification(GBMLocationNotification):
 
             self._download(new_url, f"{self._burst_name} GBM {mod} Lightcurve", use_bot=True)
 
+        # now we want to store the folder directory
+
+        self._main_ftp_directory = os.path.join('/'.join(lc_file.split('/')[:-2]),'current')
+
+        if 'https' not in self._main_ftp_directory:
+
+            self._main_ftp_directory = self._main_ftp_directory.replace('http', 'https')
+        
+            
+    def _download_data_files(self):
+
+        base_directory = os.environ.get('GBM_DATA_STORAGE_DIR')
+
+        versions = [f'v0{n}' for n in range(4)]
+        #versions.append('v0tte')
+
+        
+        
+        for vn, version in enumerate(versions):
+
+            # trigdat
+
+            files = []
+            
+            trigdat =  f"glg_trigdat_all_bn{self._burst_number}_{version}.fit"
+
+            files.append(trigdat)
+            
+            tte_files = [f'glg_tte_{detector}_bn{self._burst_number}_v00.fit' for detector in _gbm_detectors] 
+            cspec_responses = [f'glg_cspec_{detector}_bn{self._burst_number}_{version}.rsp2' for detector in _gbm_detectors]
+
+            files.extend(tte_files)
+            files.extend(cspec_responses)
+
+
+            for fn, f in enumerate(files):
+
+                # contructuct the path
+                dl_path = os.path.join(base_directory, version)
+                url = os.path.join(self._main_ftp_directory, f)
+                
+                if fn < 1:
+
+                    # trigdat
+
+                    self._download(url=url, path=dl_path, use_bot=False, wait_time=10 * (1 + vn), max_time = 60 * 60 * (1 + vn)) 
+
+                else:
+
+                    # tte files
+
+                    if vn < 2:
+
+                        # lets not wait for higher versions
+                        # we will wait for one day
+
+                        self._download(url=url, path=dl_path, use_bot=False, wait_time= 60 * 30 * (1 + vn), max_time = 60 * 60 * 24) 
+                    
+                
+
+
+            
     def action(self):
 
         super(GBMFLTNotification, self).action()
 
         self._get_light_curve_file()
-
+        self._download_data_files()
         
         
     # def action(self):

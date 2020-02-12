@@ -1,8 +1,11 @@
 import os
+import shutil
 import threading
 import time
 import requests
 import astropy.utils.data as astro_data
+
+import grbfunk.utils.file_utils as file_utils
 
 import coloredlogs, logging
 import grbfunk.utils.log
@@ -22,7 +25,7 @@ def download_file(url, path="/tmp"):
 
 
 class BackgroundDownload(object):
-    def __init__(self, url, process_counter ,bot=None, description=None, wait_time=60, max_time=60 * 60):
+    def __init__(self, url, process_counter ,bot=None, description=None, store_path=None, wait_time=60, max_time=60 * 60):
         """
         An worker to download objects in the background to avoid blocking the GCN
         listen function.
@@ -46,7 +49,27 @@ class BackgroundDownload(object):
         self._url = url
         self._bot = bot
         self._description = description
+        self._store_file = True
+        self._file_name = None
+        
+        if bot is None:
 
+            # assuming this is for storing a file
+            
+            # get the file name  at the end
+            self._file_name = url.split('/')[-1]
+            
+            
+            logger.debug(f'File {self._file_name} is assumed to be stored')
+
+            
+            self._store_file = True
+
+            assert store_path is not None, 'You did not assert as storage path'
+
+            self._store_path = store_path
+            
+        
         self._process_counter = process_counter
 
         # create a background thread that will go and download the files
@@ -84,6 +107,22 @@ class BackgroundDownload(object):
 
                     self._bot.show(path, self._description)
 
+
+                else:
+
+                    # this should never happen!
+                    assert self._store_file, 'yo, you did not have a bot speak, but you did not want to store a path'
+
+                    # create the directory
+                    
+                    file_utils.if_directory_not_existing_then_make(self._store_path)
+
+                    # move the file
+                    
+                    shutil.move(path, os.path.join(self._store_path, self._file_name) )
+
+                    logging.info(f"{self._file_name} is now in {self._store_path}" )
+                    
                 # kill the loop
                     
                 flag = False
@@ -120,21 +159,7 @@ class BackgroundDownload(object):
                     logging.debug(f"we have {self._max_time - time_spent} seconds left before I give up")
                     
                     time_spent += self._wait_time
+
+        # let us know you have died
+                    
         self._process_counter.kill_process()
-
-# def download_file(url, path="/tmp"):
-#     """
-#     Download a file to the given path
-#     """
-
-#     fname = url.split("/")[-1]
-#     path = os.path.join(path, fname)
-
-#     r = requests.get(url, stream=True)
-
-#     with open(path, "wb") as f:
-
-#         for ch in r:
-
-#             f.write(ch)
-#     return path
