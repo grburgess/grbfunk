@@ -11,6 +11,8 @@ logger = logging.getLogger("grbfunk.notification.GBM")
 
 
 class GBMNotification(Notification):
+    _current_grbs = {}
+
     def __init__(self, root, notify_type):
         """
         Generic GBM alert providing basic 
@@ -24,6 +26,9 @@ class GBMNotification(Notification):
         """
 
         bot = GBMBot()
+
+        # this 
+        self._first_time = False
         
         super(GBMNotification, self).__init__(
             instrument_name="GBM", root=root, notify_type=notify_type, bot=bot
@@ -60,7 +65,13 @@ class GBMNotification(Notification):
         frac = int(np.floor(time_frac * 1000))
 
         self._burst_name = f"GRB{yy}{mm}{dd}{frac}"
+        
+        if self._burst_name not in  GBMNotification._current_grbs:
 
+            # This should start the pipe line
+            GBMNotification._current_grbs[self._burst_name] = True
+
+        
     def _get_light_curve_file(self):
         """
         download a light curve file
@@ -74,7 +85,12 @@ class GBMNotification(Notification):
 
         lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
 
-        self._download(lc_file, "GBM Lightcurve", use_bot=True)
+        for mod in ['all', 'lores34', 'medres34', 'hires34']:
+
+            new_url = lc_file.replace('medres34', mod)
+
+        
+            self._download(new_url, f"{self._burst_name} GBM {mod} Lightcurve", use_bot=True)
 
 
 class GBMLocationNotification(GBMNotification):
@@ -115,10 +131,14 @@ class GBMLocationNotification(GBMNotification):
 
 
 class GBMFLTNotification(GBMLocationNotification):
+    
     def __init__(self, root):
 
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
+        self._get_light_curve_file()
+        
 
+        
     # def action(self):
 
     #     super(GBMFLTNotification, self).action()
@@ -135,7 +155,7 @@ class GBMGNDNotification(GBMLocationNotification):
 
         super(GBMGNDNotification, self).action()
 
-        self._get_light_curve_file()
+
 
 
 class GBMFinalNotification(GBMLocationNotification):
@@ -149,7 +169,6 @@ class GBMFinalNotification(GBMLocationNotification):
 
         super(GBMFinalNotification, self).action()
 
-        self._get_light_curve_file()
         self._get_position_plot()
 
     def _get_position_plot(self):
