@@ -160,8 +160,16 @@ class GBMFinalNotification(GBMLocationNotification):
             f"{self._burst_name} is attempting to download its GBM position plot"
         )
 
-        self._download(pos_file, "GBM 'Official' Position", use_bot=True)
+        
+        
+        
+        self._download(pos_file, f"{self._burst_name} GBM 'Official' Position", use_bot=True)
 
+        skymap_file = pos_file.replace('locplot','skymap')
+
+        self._download(skymap_file, f"{self._burst_name} GBM 'Official' Skymap", use_bot=True)
+        
+        
 
 class GBMAlertNotification(GBMNotification):
     def __init__(self, root):
