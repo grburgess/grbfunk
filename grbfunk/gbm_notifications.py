@@ -10,23 +10,21 @@ import grbfunk.utils.log
 logger = logging.getLogger("grbfunk.notification.GBM")
 
 _gbm_detectors = (
-        "n0",
-        "n1",
-        "n2",
-        "n3",
-        "n4",
-        "n5",
-        "n6",
-        "n7",
-        "n8",
-        "n9",
-        "na",
-        "nb",
-        "b0",
-        "b1",
-    )
-
-
+    "n0",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "n6",
+    "n7",
+    "n8",
+    "n9",
+    "na",
+    "nb",
+    "b0",
+    "b1",
+)
 
 
 class GBMNotification(Notification):
@@ -46,9 +44,9 @@ class GBMNotification(Notification):
 
         bot = GBMBot()
 
-        # this 
+        # this
         self._first_time = False
-        
+
         super(GBMNotification, self).__init__(
             instrument_name="GBM", root=root, notify_type=notify_type, bot=bot
         )
@@ -86,13 +84,11 @@ class GBMNotification(Notification):
         self._burst_name = f"GRB{yy}{mm}{dd}{frac}"
 
         self._burst_number = f"{yy}{mm}{dd}{frac}"
-        
-        if self._burst_name not in  GBMNotification._current_grbs:
+
+        if self._burst_name not in GBMNotification._current_grbs:
 
             # This should start the pipe line
             GBMNotification._current_grbs[self._burst_name] = True
-
-        
 
 
 class GBMLocationNotification(GBMNotification):
@@ -133,12 +129,10 @@ class GBMLocationNotification(GBMNotification):
 
 
 class GBMFLTNotification(GBMLocationNotification):
-    
     def __init__(self, root):
 
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
 
-        
     def _get_light_curve_file(self):
         """
         download a light curve file
@@ -152,83 +146,105 @@ class GBMFLTNotification(GBMLocationNotification):
 
         lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
 
-        for mod in ['all', 'lores34', 'medres34', 'hires34']:
+        for mod in ["all", "lores34", "medres34", "hires34"]:
 
-            new_url = lc_file.replace('medres34', mod)
+            new_url = lc_file.replace("medres34", mod)
 
-
-            self._download(new_url, f"{self._burst_name} GBM {mod} Lightcurve", use_bot=True)
+            self._download(
+                new_url, f"{self._burst_name} GBM {mod} Lightcurve", use_bot=True
+            )
 
         # now we want to store the folder directory
 
-        self._main_ftp_directory = os.path.join('/'.join(lc_file.split('/')[:-2]),'current')
+        self._main_ftp_directory = os.path.join(
+            "/".join(lc_file.split("/")[:-2]), "current"
+        )
 
-        if 'https' not in self._main_ftp_directory:
+        if "https" not in self._main_ftp_directory:
 
-            self._main_ftp_directory = self._main_ftp_directory.replace('http', 'https')
-        
-            
+            self._main_ftp_directory = self._main_ftp_directory.replace("http", "https")
+
     def _download_data_files(self):
 
-        base_directory = os.environ.get('GBM_DATA_STORAGE_DIR')
+        flag = False
+        if self._burst_name in GBMFLTNotification._current_grbs:
 
-        versions = [f'v0{n}' for n in range(4)]
-        #versions.append('v0tte')
+            flag = GBMFLTNotification._current_grbs[self._burst_name]
 
-        
-        
-        for vn, version in enumerate(versions):
+            GBMFLTNotification._current_grbs[self._burst_name] = False
 
-            # trigdat
-
-            files = []
-            
-            trigdat =  f"glg_trigdat_all_bn{self._burst_number}_{version}.fit"
-
-            files.append(trigdat)
-            
-            tte_files = [f'glg_tte_{detector}_bn{self._burst_number}_v00.fit' for detector in _gbm_detectors] 
-            cspec_responses = [f'glg_cspec_{detector}_bn{self._burst_number}_{version}.rsp2' for detector in _gbm_detectors]
-
-            files.extend(tte_files)
-            files.extend(cspec_responses)
+        if flag:
 
 
-            for fn, f in enumerate(files):
+            base_directory = os.environ.get("GBM_DATA_STORAGE_DIR")
 
-                # contructuct the path
-                dl_path = os.path.join(base_directory, self._burst_name, version)
-                url = os.path.join(self._main_ftp_directory, f)
-                
-                if fn < 1:
+            versions = [f"v0{n}" for n in range(4)]
+            # versions.append('v0tte')
 
-                    # trigdat
+            for vn, version in enumerate(versions):
 
-                    self._download(url=url, path=dl_path, use_bot=False, wait_time=10 * (1 + vn), max_time = 60 * 60 * (1 + vn)) 
+                # trigdat
 
-                else:
+                files = []
 
-                    # tte files
+                trigdat = f"glg_trigdat_all_bn{self._burst_number}_{version}.fit"
 
-                    if vn < 2:
+                files.append(trigdat)
 
-                        # lets not wait for higher versions
-                        # we will wait for one day
+                tte_files = [
+                    f"glg_tte_{detector}_bn{self._burst_number}_v00.fit"
+                    for detector in _gbm_detectors
+                ]
+                cspec_responses = [
+                    f"glg_cspec_{detector}_bn{self._burst_number}_{version}.rsp2"
+                    for detector in _gbm_detectors
+                ]
 
-                        self._download(url=url, path=dl_path, use_bot=False, wait_time= 60 * 30 * (1 + vn), max_time = 60 * 60 * 24) 
-                    
-                
+                files.extend(tte_files)
+                files.extend(cspec_responses)
 
+                for fn, f in enumerate(files):
 
-            
+                    # contructuct the path
+                    dl_path = os.path.join(base_directory, self._burst_name, version)
+                    url = os.path.join(self._main_ftp_directory, f)
+
+                    if fn < 1:
+
+                        # trigdat
+
+                        self._download(
+                            url=url,
+                            path=dl_path,
+                            use_bot=False,
+                            wait_time=10 * (1 + vn),
+                            max_time=60 * 60 * (1 + vn),
+                        )
+
+                    else:
+
+                        # tte files
+
+                        if vn < 2:
+
+                            # lets not wait for higher versions
+                            # we will wait for one day
+
+                            self._download(
+                                url=url,
+                                path=dl_path,
+                                use_bot=False,
+                                wait_time=60 * 30 * (1 + vn),
+                                max_time=60 * 60 * 24,
+                            )
+
     def action(self):
 
         super(GBMFLTNotification, self).action()
 
         self._get_light_curve_file()
         self._download_data_files()
-        
-        
+
     # def action(self):
 
     #     super(GBMFLTNotification, self).action()
@@ -244,8 +260,6 @@ class GBMGNDNotification(GBMLocationNotification):
     def action(self):
 
         super(GBMGNDNotification, self).action()
-
-
 
 
 class GBMFinalNotification(GBMLocationNotification):
@@ -269,16 +283,16 @@ class GBMFinalNotification(GBMLocationNotification):
             f"{self._burst_name} is attempting to download its GBM position plot"
         )
 
-        
-        
-        
-        self._download(pos_file, f"{self._burst_name} GBM 'Official' Position", use_bot=True)
+        self._download(
+            pos_file, f"{self._burst_name} GBM 'Official' Position", use_bot=True
+        )
 
-        skymap_file = pos_file.replace('locplot','skymap')
+        skymap_file = pos_file.replace("locplot", "skymap")
 
-        self._download(skymap_file, f"{self._burst_name} GBM 'Official' Skymap", use_bot=True)
-        
-        
+        self._download(
+            skymap_file, f"{self._burst_name} GBM 'Official' Skymap", use_bot=True
+        )
+
 
 class GBMAlertNotification(GBMNotification):
     def __init__(self, root):
