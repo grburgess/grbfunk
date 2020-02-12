@@ -3,7 +3,7 @@ from contextlib import contextmanager
 import tempfile
 import shutil
 import uuid
-from threeML.exceptions.custom_exceptions import custom_warnings
+
 
 
 def file_existing_and_readable(filename):
@@ -109,7 +109,7 @@ def temporary_directory(prefix='', within_directory=None):
 
     except:
 
-        custom_warnings.warn("Couldn't remove temporary directory %s" % directory)
+        pass
 
 
 @contextmanager
