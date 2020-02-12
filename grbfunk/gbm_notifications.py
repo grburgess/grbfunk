@@ -72,25 +72,6 @@ class GBMNotification(Notification):
             GBMNotification._current_grbs[self._burst_name] = True
 
         
-    def _get_light_curve_file(self):
-        """
-        download a light curve file
-
-        :returns: 
-        :rtype: 
-
-        """
-
-        logger.debug(f"{self._burst_name} is about to find its lightcurve file")
-
-        lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
-
-        for mod in ['all', 'lores34', 'medres34', 'hires34']:
-
-            new_url = lc_file.replace('medres34', mod)
-
-        
-            self._download(new_url, f"{self._burst_name} GBM {mod} Lightcurve", use_bot=True)
 
 
 class GBMLocationNotification(GBMNotification):
@@ -135,9 +116,35 @@ class GBMFLTNotification(GBMLocationNotification):
     def __init__(self, root):
 
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
-        self._get_light_curve_file()
-        
 
+        
+    def _get_light_curve_file(self):
+        """
+        download a light curve file
+
+        :returns: 
+        :rtype: 
+
+        """
+
+        logger.debug(f"{self._burst_name} is about to find its lightcurve file")
+
+        lc_file = self._root.find(".//Param[@name='LightCurve_URL']").attrib["value"]
+
+        for mod in ['all', 'lores34', 'medres34', 'hires34']:
+
+            new_url = lc_file.replace('medres34', mod)
+
+
+            self._download(new_url, f"{self._burst_name} GBM {mod} Lightcurve", use_bot=True)
+
+    def action(self):
+
+        super(GBMFLTNotification, self).action()
+
+        self._get_light_curve_file()
+
+        
         
     # def action(self):
 
