@@ -197,7 +197,7 @@ class GBMFLTNotification(GBMLocationNotification):
             for fn, f in enumerate(files):
 
                 # contructuct the path
-                dl_path = os.path.join(base_directory, version)
+                dl_path = os.path.join(base_directory, self._burst_name, version)
                 url = os.path.join(self._main_ftp_directory, f)
                 
                 if fn < 1:
