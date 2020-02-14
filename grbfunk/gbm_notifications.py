@@ -192,7 +192,7 @@ class GBMFLTNotification(GBMLocationNotification):
                 files.append(trigdat)
 
                 tte_files = [
-                    f"glg_tte_{detector}_bn{self._burst_number}_v00.fit"
+                    f"glg_tte_{detector}_bn{self._burst_number}_{version}.fit"
                     for detector in _gbm_detectors
                 ]
                 cspec_responses = [
