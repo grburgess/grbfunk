@@ -38,11 +38,10 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
     # for travisCI
     _TRAVIS_TOKEN = os.environ.get("TOKEN")
-    
+
     if _TRAVIS_TOKEN is not None:
 
         _TESTING = True
-
 
 
 def test_background_download():
@@ -50,10 +49,12 @@ def test_background_download():
     url = "http://0.0.0.0:8080/clowns.txt"
 
     token = _TRAVIS_TOKEN
-    
-    bot = Bot('test',token = token, chat_id = None )
-    
-    dl = BackgroundDownload(url, _global_proccess_counter, bot=bot, wait_time=1, max_time=60)
+
+    bot = Bot("test", token=token, chat_id=None)
+
+    dl = BackgroundDownload(
+        url, _global_proccess_counter, bot=bot, wait_time=1, max_time=60
+    )
 
     time.sleep(5)
 
@@ -69,10 +70,11 @@ def test_background_download_timeout():
     url = "http://0.0.0.0:8080/clowns.txt"
 
     token = _TRAVIS_TOKEN
-    
-    bot = Bot('test',token = token, chat_id = None )
 
-    
-    dl = BackgroundDownload(url, _global_proccess_counter, bot=bot, wait_time=1, max_time=9)
+    bot = Bot("test", token=token, chat_id=None)
+
+    dl = BackgroundDownload(
+        url, _global_proccess_counter, bot=bot, wait_time=1, max_time=9
+    )
 
     time.sleep(10)

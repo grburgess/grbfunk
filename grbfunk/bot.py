@@ -20,10 +20,11 @@ if os.environ.get("GRBFUNK_DEBUG") is not None:
 
     # for travisCI
     _TRAVIS_TOKEN = os.environ.get("TOKEN")
-    
+
     if _TRAVIS_TOKEN is not None:
 
         _TESTING = True
+
 
 class Bot(object):
     def __init__(self, name, token, chat_id):
@@ -45,7 +46,7 @@ class Bot(object):
         self._chat_id = chat_id
 
         if _DEBUG:
-            
+
             # if we are testing we send stuff to a special
             # chat. go ahead and spam me
 
@@ -112,5 +113,4 @@ class GBMBot(Bot):
             chat_id = access["chat_id"]
             token = access["token"]
 
-        
         super(GBMBot, self).__init__(name="GBM", token=token, chat_id=chat_id)

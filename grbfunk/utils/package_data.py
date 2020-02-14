@@ -3,6 +3,7 @@ import os
 from shutil import copyfile
 import yaml
 
+
 def get_path_of_data_file(data_file):
     file_path = pkg_resources.resource_filename("grbfunk", "data/%s" % data_file)
 
@@ -34,8 +35,8 @@ def get_path_of_user_dir():
 def get_access_file():
     access_path = os.path.join(get_path_of_user_dir(), "access.yaml")
     with open(access_path) as f:
-    # The FullLoader parameter handles the conversion from YAML
-    # scalar values to Python the dictionary format
+        # The FullLoader parameter handles the conversion from YAML
+        # scalar values to Python the dictionary format
         access = yaml.load(f, Loader=yaml.SafeLoader)
 
     return access

@@ -83,7 +83,13 @@ class Notification(object):
         self.action()
 
     def _download(
-        self, url, description=None, path=None, use_bot=True, wait_time=60, max_time=60 * 60
+        self,
+        url,
+        description=None,
+        path=None,
+        use_bot=True,
+        wait_time=60,
+        max_time=60 * 60,
     ):
 
         logger.debug(

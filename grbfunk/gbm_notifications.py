@@ -175,7 +175,6 @@ class GBMFLTNotification(GBMLocationNotification):
 
         if flag:
 
-
             base_directory = os.environ.get("GBM_DATA_STORAGE_DIR")
 
             versions = [f"v0{n}" for n in range(4)]

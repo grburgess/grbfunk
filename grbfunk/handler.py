@@ -8,8 +8,6 @@ from grbfunk.notification_lookup import notification_lookup
 import os
 
 
-
-
 @gcn.include_notice_types(
     gcn.notice_types.FERMI_GBM_ALERT,  # Fermi GBM localization (flight)
     gcn.notice_types.FERMI_GBM_FLT_POS,  # Fermi GBM localization (flight)
@@ -23,6 +21,3 @@ def handler(payload, root):
     notification = notification_lookup[alert_type](root)
 
     # only send messages if we are NOT testing
-
- 
-    

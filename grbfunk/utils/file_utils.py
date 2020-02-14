@@ -5,7 +5,6 @@ import shutil
 import uuid
 
 
-
 def file_existing_and_readable(filename):
 
     sanitized_filename = sanitize_filename(filename)
@@ -73,7 +72,7 @@ def if_directory_not_existing_then_make(directory):
     """
 
     sanitized_directory = sanitize_filename(directory)
-    
+
     if not os.path.exists(sanitized_directory):
 
         os.makedirs(sanitized_directory)
@@ -89,7 +88,7 @@ def get_random_unique_name():
 
 
 @contextmanager
-def temporary_directory(prefix='', within_directory=None):
+def temporary_directory(prefix="", within_directory=None):
     """
     This context manager creates a temporary directory in the most secure possible way (with no race condition), and
     removes it at the end.
