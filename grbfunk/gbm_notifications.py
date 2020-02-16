@@ -82,9 +82,9 @@ class GBMNotification(Notification):
         frac = str(int(np.round(time_frac * 1000)))
 
         if len(frac)==1:
-            frac = "00" + frac
+            frac = f"00{frac}"
         elif len(frac)==2:
-            frac = "0" + frac
+            frac = f"0{frac}"
         
         self._burst_name = f"GRB{yy}{mm}{dd}{frac}"
 
