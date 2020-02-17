@@ -79,8 +79,13 @@ class GBMNotification(Notification):
             - datetime.strptime(trigger_day_start, "%Y-%m-%d")
         ).total_seconds() / timedelta(1).total_seconds()
 
-        frac = int(np.floor(time_frac * 1000))
+        frac = str(int(np.round(time_frac * 1000)))
 
+        if len(frac)==1:
+            frac = f"00{frac}"
+        elif len(frac)==2:
+            frac = f"0{frac}"
+        
         self._burst_name = f"GRB{yy}{mm}{dd}{frac}"
 
         self._burst_number = f"{yy}{mm}{dd}{frac}"
