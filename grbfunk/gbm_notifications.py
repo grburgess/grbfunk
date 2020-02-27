@@ -27,6 +27,7 @@ _gbm_detectors = (
 )
 
 
+
 class GBMNotification(Notification):
     _current_grbs = {}
 
@@ -135,6 +136,13 @@ class GBMLocationNotification(GBMNotification):
 
 class GBMFLTNotification(GBMLocationNotification):
     def __init__(self, root):
+        """FIXME! briefly describe function
+
+        :param root: 
+        :returns: 
+        :rtype: 
+
+        """
 
         super(GBMFLTNotification, self).__init__(root=root, notify_type="FLT Position")
 
@@ -247,7 +255,7 @@ class GBMFLTNotification(GBMLocationNotification):
         super(GBMFLTNotification, self).action()
 
         self._get_light_curve_file()
-        self._download_data_files()
+#        self._download_data_files()
 
     # def action(self):
 
